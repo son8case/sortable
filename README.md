@@ -1,6 +1,6 @@
-# TEMPLATE
+# SORTABLE
 
-> Project Summary
+> Case study of sorting algorithms
 
 Project Overview
 
