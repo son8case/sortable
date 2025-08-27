@@ -9,22 +9,22 @@
 namespace son8::sortable {
 
     template< typename Type >
-    void print( Range< Type > range ) {
+    void print( Range< Type > range, std::ostream &os = std::cout ) {
         Type *it = range.beg( );
-        std::cout << "[ " << *it;
-        while ( ++it < range.end( ) ) std::cout << ", " << *it;
-        std::cout << " ]";
+        os << "[ " << *it;
+        while ( ++it < range.end( ) ) os << ", " << *it;
+        os << " ]";
     }
 
     template< typename Type >
-    void println( Range< Type > range ) {
-        print( range );
-        std::cout << std::endl;
+    void println( Range< Type > range, std::ostream &os = std::cout ) {
+        print( range, os );
+        os << std::endl;
     }
 
     template< typename Type >
     std::ostream &operator<<( std::ostream &os, Range< Type > range ) {
-        print( range );
+        print( range, os );
         return os;
     }
 

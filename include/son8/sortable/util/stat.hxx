@@ -29,16 +29,16 @@ namespace son8::sortable {
         Stat( Stat const &stat ) : value_{ stat.value_ } { ++assigns_count_; }
         Stat( Stat && stat ) noexcept : value_{ std::move( stat.value_ ) } { ++assigns_count_; };
         // operators
-        Stat &operator=( Stat const &stat ) {
-            assert( this != &stat );
+        Stat &operator=( Stat const &other ) {
+            assert( this != &other );
             ++assigns_count_;
-            value_ = stat.value_;
+            value_ = other.value_;
             return *this;
         }
-        Stat &operator=( Stat&& stat ) noexcept {
-            assert( this != &stat );
+        Stat &operator=( Stat&& other ) noexcept {
+            assert( this != &other );
             ++assigns_count_;
-            value_ = std::move( stat.value_ );
+            value_ = std::move( other.value_ );
             return *this;
         }
         bool operator<( Stat const &other ) const {
