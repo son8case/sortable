@@ -25,6 +25,6 @@ namespace son8::sortable {
 
 } // namespace son8::sortable
 
-#endif//SON8_PATH_FILE_NAME_HXX
+#endif//SON8_SORTABLE_IMPL_BUBBLE_HXX
 
 // Ⓒ 2025 Oleg'Ease'Kharchuk ᦒ

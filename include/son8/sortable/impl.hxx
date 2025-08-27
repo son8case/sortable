@@ -8,3 +8,5 @@
 #include <son8/sortable/impl/simple.hxx>
 
 #endif//SON8_SORTABLE_IMPL_HXX
+
+// Ⓒ 2025 Oleg'Ease'Kharchuk ᦒ
