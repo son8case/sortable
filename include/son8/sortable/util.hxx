@@ -5,6 +5,7 @@
 #include <son8/sortable/util/compare.hxx>
 #include <son8/sortable/util/print.hxx>
 #include <son8/sortable/util/range.hxx>
+#include <son8/sortable/util/stat.hxx>
 #include <son8/sortable/util/swap.hxx>
 
 #endif//SON8_SORTABLE_UTIL_HXX
