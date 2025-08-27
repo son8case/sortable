@@ -22,7 +22,7 @@ namespace son8::sortable {
         }
     }
 
-}
+} // namespace son8::sortable
 
 #endif//SON8_SORTABLE_IMPL_SELECTION_HXX
 

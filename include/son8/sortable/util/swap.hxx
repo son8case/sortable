@@ -9,16 +9,14 @@ namespace son8::sortable {
 
     template< typename Type >
     void swap( Type &lhs, Type &rhs ) {
-        Type tmp;
-        assign( tmp, std::move( lhs ) );
+        Type tmp = std::move( lhs );
         assign( lhs, std::move( rhs ) );
         assign( rhs, std::move( tmp ) );
     }
 
     template< typename Type >
     void swap( Type *lhs, Type *rhs ) {
-        Type temp;
-        assign( temp, std::move( *lhs ) );
+        Type temp = std::move( *lhs );
         assign( *lhs, std::move( *rhs ) );
         assign( *rhs, std::move( temp ) );
     }
