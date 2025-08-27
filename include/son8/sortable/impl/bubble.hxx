@@ -9,11 +9,17 @@ namespace son8::sortable {
 
     template< typename Type >
     void bubble( Range< Type > range ) {
+        auto first = range.beg( );
         auto last = range.end( ) - 1;
-        for ( auto itL = range.beg( ); itL < last; ++itL ) {
-            for ( auto itR = last; itR > itL; --itR ) {
-                if ( compare( itR, itL ) ) swap( itR, itL );
+        for ( auto itL = first; itL < last; ++itL ) {
+            bool swapped = false;
+            for ( auto itR = first; itR < last - ( itL - first ); ++itR ) {
+                if ( compare( itR + 1, itR ) ) {
+                    swap( itR + 1, itR );
+                    swapped = true;
+                }
             }
+            if ( !swapped ) break;
         }
     }
 
