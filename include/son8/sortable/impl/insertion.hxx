@@ -5,12 +5,14 @@
 #include <son8/sortable/util/compare.hxx>
 #include <son8/sortable/util/range.hxx>
 
+#include <utility>
+
 namespace son8::sortable {
 
     template< typename Type >
     void insertion( Range< Type > range ) {
         for ( auto itR = range.beg( ) + 1; itR < range.end( ); ++itR ) {
-            Type val = std::move( *itR );
+            Type val{ assign( std::move( *itR ) ) };
             auto itL = itR;
             while ( --itL >= range.beg( ) ) {
                 if ( compare( val, *itL ) ) assign( *( itL + 1 ), std::move( *itL ) );

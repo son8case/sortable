@@ -2,6 +2,7 @@
 #define SON8_SORTABLE_UTIL_PRINT_HXX
 
 #include <son8/sortable/util/range.hxx>
+#include <son8/sortable/util/stat.hxx>
 
 #include <iostream>
 
@@ -19,6 +20,12 @@ namespace son8::sortable {
     void println( Range< Type > range ) {
         print( range );
         std::cout << std::endl;
+    }
+
+    template< typename Type >
+    std::ostream &operator<<( std::ostream &os, Range< Type > range ) {
+        print( range );
+        return os;
     }
 
 } // namespace son8::sortable

@@ -5,6 +5,11 @@
 
 namespace son8::sortable {
 
+    template< typename Type >
+    [[nodiscard]] decltype(auto) assign( Type &&val ) {
+        return std::forward< Type >( val );
+    }
+
     template< typename OutT, typename ValT >
     void assign( OutT &out, ValT &&val ) {
         out = std::forward< ValT >( val );
