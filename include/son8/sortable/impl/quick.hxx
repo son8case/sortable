@@ -18,7 +18,7 @@ namespace son8::sortable {
         Partition_( RangeType range ) {
             assert( range.end( ) - range.beg( ) > 2 );
             auto pivot = range.beg( );
-            auto itL = range.beg( ) ;
+            auto itL = range.beg( );
             auto itR = range.end( ) - 1;
             for (;/*_*/;) {
                 while ( itL <= itR && itL != pivot && compare( itL, pivot ) ) ++itL;
@@ -45,7 +45,7 @@ namespace son8::sortable {
     template< typename Type >
     void quick( Range< Type > range ) {
         auto d = range.end( ) - range.beg( );
-        if ( d < 3) {
+        if ( d < 3 ) {
             if ( d == 2 && compare( range.beg( ) + 1, range.beg( ) ) ) swap( range.beg( ) + 1, range.beg( ) );
             return;
         }
