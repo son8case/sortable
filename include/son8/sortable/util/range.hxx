@@ -20,6 +20,11 @@ namespace son8::sortable {
         Type *mid( ) const { return beg_ + ( ( end_ - beg_ ) >> 1 ); }
     }; // class Range
 
+    template< typename Type >
+    bool operator==( Range< Type > const &lhs, Range< Type > const &rhs ) {
+        return lhs.beg( ) == rhs.beg( ) && lhs.end( ) == rhs.end( );
+    }
+
 } // namespace son8::sortable
 
 #endif//SON8_SORTABLE_UTIL_RANGE_HXX

@@ -8,30 +8,51 @@
 #include <cassert>
 
 namespace son8::sortable {
-    // TODO: improve partition logic and behavior, remove itL,itR pivot checks (self comparison avoidance)
+    // TODO: remove itL,itR pivot checks (self comparison avoidance)
     template< typename Type >
-    void quick( Range< Type > range ) {
-        static auto partition = []( Range< Type > p_range ) -> Type* {
-            auto d = p_range.end( ) - p_range.beg( );
-            auto pivot = p_range.beg( );
-            auto itL = p_range.beg( );
-            auto itR = p_range.end( ) - 1;
-            if ( d == 2 && --d && compare( itR, itR - 1 ) ) swap( itR, itR - 1 );
-            --d;
-            while ( d ) {
+    class Partition_ final {
+        using RangeType = Range< Type >;
+        using PointerType = Type*;
+        PointerType ltL, ltR, rtL, rtR;
+    public:
+        Partition_( RangeType range ) {
+            assert( range.end( ) - range.beg( ) > 2 );
+            auto pivot = range.beg( );
+            auto itL = range.beg( );
+            auto itR = range.end( ) - 1;
+            for (;/*_*/;) {
                 while ( itL <= itR && itL != pivot && compare( itL, pivot ) ) ++itL;
                 while ( itL <= itR && itR != pivot && compare( pivot, itR ) ) --itR;
-                if ( itL >= itR ) return itR + 1;
+                if ( itL >= itR ) break;
                 swap( itL++, itR-- );
             }
+            ltL = range.beg( );
+            ltR = itR + 1;
+            rtL = itR + 1;
+            rtR = range.end( );
+        }
 
-            return nullptr;
-        };
+        auto leftmost( ) const { return RangeType{ ltL, ltR }; }
+        auto rightful( ) const { return RangeType{ rtL, rtR }; }
 
-        auto pivot = partition( range );
-        if ( pivot == nullptr ) return;
-        quick( Range{ range.beg( ), pivot } );
-        quick( Range{ pivot, range.end( ) } );
+        bool is_last( ) const { return ltL == rtL && ltR == rtR; }
+
+        Partition_( ) = delete;
+        Partition_( Partition_ && ) = delete;
+        auto &operator=( Partition_ && ) = delete;
+    }; // class Partition_
+
+    template< typename Type >
+    void quick( Range< Type > range ) {
+        auto d = range.end( ) - range.beg( );
+        if ( d < 3 ) {
+            if ( d == 2 && compare( range.beg( ) + 1, range.beg( ) ) ) swap( range.beg( ) + 1, range.beg( ) );
+            return;
+        }
+
+        Partition_ p{ range };
+        quick( p.leftmost( ) );
+        quick( p.rightful( ) );
     }
 
 } // namespace son8::sortable

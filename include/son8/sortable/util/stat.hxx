@@ -8,17 +8,19 @@ namespace son8::sortable {
     template< typename Type >
     class Stat {
         struct Counter {
-            unsigned value{ 0 };
+            using ValueType = unsigned long long;
+            ValueType value{ 0 };
             Counter &operator++( ) {
                 if ( is_enabled_ ) ++value;
                 return *this;
             }
-            Counter &operator+=( unsigned add ) {
+            Counter &operator+=( ValueType add ) {
                 if ( is_enabled_ ) value = value + add;
                 return *this;
             }
         };
         inline static bool is_enabled_ = false;
+        inline static bool is_selfswap_ = false;
         inline static Counter assigns_count_;
         inline static Counter compare_count_;
         Type value_;
@@ -51,23 +53,29 @@ namespace son8::sortable {
             ++compare_count_;
             return value_ == other.value_;
         }
+        auto operator++( ) -> Stat& {
+            ++value_;
+            return *this;
+        }
         operator Type( ) const { return value_; }
         // methods
         void swap( Stat &other ) noexcept {
-            assert( this != &other );
+            assert( is_selfswap_ || this != &other );
             using std::swap;
             swap( value_, other.value_ );
             assigns_count_ += 3; // Each swap involves 3 assignments
         }
         // static methods
-        static unsigned get_assigns_count() { return assigns_count_.value; }
-        static unsigned get_compare_count() { return compare_count_.value; }
+        static auto get_assigns_count() { return assigns_count_.value; }
+        static auto get_compare_count() { return compare_count_.value; }
         static void reset_counters() {
             assigns_count_.value = 0;
             compare_count_.value = 0;
         }
         static void enable_counters( ) { is_enabled_ = true; }
         static void disable_counters( ) { is_enabled_ = false; }
+        static void allow_selfswap( ) { is_selfswap_ = true; }
+        static void disallow_selfswap( ) { is_selfswap_ = false; }
     }; // class Stat
 
     template< typename AdlSucks >

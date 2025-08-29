@@ -3,6 +3,7 @@
 
 #include <son8/sortable/util/assign.hxx>
 #include <son8/sortable/util/compare.hxx>
+#include <son8/sortable/util/permutate.hxx>
 #include <son8/sortable/util/print.hxx>
 #include <son8/sortable/util/range.hxx>
 #include <son8/sortable/util/stat.hxx>
