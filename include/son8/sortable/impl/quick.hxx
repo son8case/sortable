@@ -12,10 +12,9 @@ namespace son8::sortable {
     template< typename Type >
     class Partition_ final {
         using RangeType = Range< Type >;
-        using PointerType = Type*;
-        PointerType ltL, ltR, rtL, rtR;
+        RangeType leftmost_, rightful_;
     public:
-        Partition_( RangeType range ) {
+        Partition_( RangeType range ) : leftmost_{ range.beg( ), range.mid( ) }, rightful_{ range.mid( ), range.end( ) } {
             assert( range.end( ) - range.beg( ) > 2 );
             auto pivot = range.beg( );
             auto itL = range.beg( );
@@ -26,17 +25,32 @@ namespace son8::sortable {
                 if ( itL >= itR ) break;
                 swap( itL++, itR-- );
             }
-            ltL = range.beg( );
-            ltR = itR + 1;
-            rtL = itR + 1;
-            rtR = range.end( );
+            ++itR;
+            leftmost_ = RangeType{ range.beg( ), itR };
+            rightful_ = RangeType{ itR, range.end( ) };
+            // TODO (in progress): fix unbalanced cases, when one split
+            //      is significantly smaller than the other
+            if ( range.size( ) > 8 ) {
+                if ( rightful_.size( ) == 1 ) {
+                    swap( leftmost_.beg( ), leftmost_.mid( ) );
+                } else if ( leftmost_.size( ) == 1 ) {
+                    for ( ; itR != rightful_.end( ) - 1; ++itR ) {
+                        if ( compare( itR + 1, itR ) ) {
+                            swap( rightful_.beg( ), rightful_.mid( ) );
+                            return;
+                        }
+                    }
+                    // REMINDER:
+                    //      right split is already sorted
+                    //      leftmost_ size = 1 means it is the smallest element
+                    rightful_ = RangeType{ rightful_.end( ) - 1, rightful_.end( ) };
+                }
+            }
         }
-
-        auto leftmost( ) const { return RangeType{ ltL, ltR }; }
-        auto rightful( ) const { return RangeType{ rtL, rtR }; }
-
-        bool is_last( ) const { return ltL == rtL && ltR == rtR; }
-
+        // accessors
+        auto leftmost( ) const { return leftmost_; }
+        auto rightful( ) const { return rightful_; }
+        // deleted
         Partition_( ) = delete;
         Partition_( Partition_ && ) = delete;
         auto &operator=( Partition_ && ) = delete;

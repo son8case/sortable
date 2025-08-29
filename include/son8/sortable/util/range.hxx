@@ -18,6 +18,7 @@ namespace son8::sortable {
         Type *beg( ) const { return beg_; }
         Type *end( ) const { return end_; }
         Type *mid( ) const { return beg_ + ( ( end_ - beg_ ) >> 1 ); }
+        auto size( ) const { return end_ - beg_; }
     }; // class Range
 
     template< typename Type >
