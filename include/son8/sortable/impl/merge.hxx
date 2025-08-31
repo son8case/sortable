@@ -17,7 +17,7 @@ namespace son8::sortable {
         using RangeType = Range< Type >;
         constexpr std::size_t StackBuffSize = 256u / sizeof( Type );
         RangeType buffer = range;
-
+        // stack buffer optimization
         std::vector< Type > buffvec_;
         std::array< Type, StackBuffSize > buffarr_;
         if ( range.size( ) > StackBuffSize ) {
@@ -28,20 +28,21 @@ namespace son8::sortable {
         }
         auto min_size = []( std::size_t a, std::size_t b ) { return a < b ? a : b; };
 
+        auto const fullsize = range.size( );
         std::size_t step = 1u;
         std::size_t offset = 0u;
         bool switch_buffer = false;
+        // ping-pong buffers
         RangeType buffers[2] = { range, buffer };
-        while ( step < range.size( ) ) {
+        while ( step < fullsize ) {
             auto srs = buffers[switch_buffer];
             auto dst = buffers[!switch_buffer];
 
-            while ( offset < range.size( ) ) {
-                auto full_size = range.size();
+            while ( offset < fullsize ) {
                 auto itSrsLft = srs.beg() + offset;
-                auto itSrsLnd = srs.beg() + min_size(offset + step, full_size);
+                auto itSrsLnd = srs.beg() + min_size(offset + step, fullsize);
                 auto itSrsRht = itSrsLnd;
-                auto itSrsRnd = srs.beg() + min_size(offset + step * 2, full_size);
+                auto itSrsRnd = srs.beg() + min_size(offset + step * 2, fullsize);
                 auto itDstLt = dst.beg() + offset;
 
                 while ( itSrsLft != itSrsLnd && itSrsRht != itSrsRnd ) {
