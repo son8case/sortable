@@ -8,48 +8,64 @@
 #include <cassert>
 
 namespace son8::sortable {
-    // TODO: remove itL,itR pivot checks (self comparison avoidance)
+
     template< typename Type >
     class Partition_ final {
         using RangeType = Range< Type >;
-        RangeType leftmost_, rightful_;
+        using PointerType = Type *;
+        PointerType beg_, mid_, end_;
+        bool is_unbalanced( ) const {
+            // smaller of two splits is less than one quarter of full size
+            auto minsize = mid_ - beg_ < end_ - mid_ ? mid_ - beg_ : end_ - mid_;
+            auto fullsize = end_ - beg_;
+            return minsize < ( fullsize >> 2 );
+        }
     public:
-        Partition_( RangeType range ) : leftmost_{ range.beg( ), range.mid( ) }, rightful_{ range.mid( ), range.end( ) } {
+        // TODO: rewrite to more sane version
+        Partition_( RangeType range ) : beg_{ range.beg( ) }, mid_{ range.end( ) - 1 }, end_{ range.end( ) } {
             assert( range.end( ) - range.beg( ) > 2 );
             auto pivot = range.beg( );
-            auto itL = range.beg( );
-            auto itR = range.end( ) - 1;
             for (;/*_*/;) {
-                while ( itL <= itR && itL != pivot && compare( itL, pivot ) ) ++itL;
-                while ( itL <= itR && itR != pivot && compare( pivot, itR ) ) --itR;
-                if ( itL >= itR ) break;
-                swap( itL++, itR-- );
+                while ( beg_ <= mid_ && beg_ != pivot && compare( beg_, pivot ) ) ++beg_;
+                while ( beg_ <= mid_ && mid_ != pivot && compare( pivot, mid_ ) ) --mid_;
+                if ( beg_ >= mid_ ) break;
+                swap( beg_++, mid_-- );
             }
-            ++itR;
-            leftmost_ = RangeType{ range.beg( ), itR };
-            rightful_ = RangeType{ itR, range.end( ) };
+            beg_ = range.beg( );
+            ++mid_;
             // TODO (in progress): fix unbalanced cases, when one split
             //      is significantly smaller than the other
-            if ( range.size( ) > 8 ) {
-                if ( rightful_.size( ) == 1 ) {
-                    swap( leftmost_.beg( ), leftmost_.mid( ) );
-                } else if ( leftmost_.size( ) == 1 ) {
-                    for ( ; itR != rightful_.end( ) - 1; ++itR ) {
-                        if ( compare( itR + 1, itR ) ) {
-                            swap( rightful_.beg( ), rightful_.mid( ) );
+            if ( is_unbalanced( ) ) {
+                auto greater = end_ - mid_ < mid_ - beg_ ? leftmost( ) : rightful( );
+                if ( end_ - mid_ == 1 ) {
+                    // right split is one element with maximum value, check if other is fully reversed
+                    for ( auto it = greater.beg( ) + 1; it != greater.end( ); ++it ) {
+                        if ( compare( it - 1, it ) ) {
+                            swap( greater.beg( ), it );
                             return;
                         }
                     }
-                    // REMINDER:
-                    //      right split is already sorted
-                    //      leftmost_ size = 1 means it is the smallest element
-                    rightful_ = RangeType{ rightful_.end( ) - 1, rightful_.end( ) };
+                    // reverse left split and make it one element
+                    while ( beg_ < mid_ - 1 ) swap( beg_++, --mid_ );
+                    beg_ = mid_ - 1;
+                } else if ( mid_ - beg_ == 1 ) {
+                    // left split is one element with minimum value, check if other is already sorted
+                    for (auto it = greater.beg( ); it != greater.end( ) - 1; ++it ) {
+                        if ( compare( it + 1, it ) ) {
+                            swap( greater.end( ) - 1, it );
+                            return;
+                        }
+                    }
+                    // right split is already sorted make it one element
+                    end_ = mid_ + 1;
+                } else {
+                    // TODO: other not one element unbalances
                 }
             }
         }
         // accessors
-        auto leftmost( ) const { return leftmost_; }
-        auto rightful( ) const { return rightful_; }
+        auto leftmost( ) const { return RangeType{ beg_, mid_ }; }
+        auto rightful( ) const { return RangeType{ mid_, end_ }; }
         // deleted
         Partition_( ) = delete;
         Partition_( Partition_ && ) = delete;
