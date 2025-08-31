@@ -36,12 +36,12 @@ namespace son8::sortable {
             // TODO (in progress): fix unbalanced cases, when one split
             //      is significantly smaller than the other
             if ( is_unbalanced( ) ) {
+                auto greater = end_ - mid_ < mid_ - beg_ ? leftmost( ) : rightful( );
                 if ( end_ - mid_ == 1 ) {
                     // right split is one element with maximum value, check if other is fully reversed
-                    auto leftmost_ = leftmost( );
-                    for ( auto it = leftmost_.beg( ) + 1; it != leftmost_.end( ); ++it ) {
+                    for ( auto it = greater.beg( ) + 1; it != greater.end( ); ++it ) {
                         if ( compare( it - 1, it ) ) {
-                            swap( leftmost_.beg( ), it );
+                            swap( greater.beg( ), it );
                             return;
                         }
                     }
@@ -50,15 +50,16 @@ namespace son8::sortable {
                     beg_ = mid_ - 1;
                 } else if ( mid_ - beg_ == 1 ) {
                     // left split is one element with minimum value, check if other is already sorted
-                    auto rightful_ = rightful( );
-                    for (auto it = rightful_.beg( ); it != rightful_.end( ) - 1; ++it ) {
+                    for (auto it = greater.beg( ); it != greater.end( ) - 1; ++it ) {
                         if ( compare( it + 1, it ) ) {
-                            swap( rightful_.end( ) - 1, it );
+                            swap( greater.end( ) - 1, it );
                             return;
                         }
                     }
                     // right split is already sorted make it one element
                     end_ = mid_ + 1;
+                } else {
+                    // TODO: other not one element unbalances
                 }
             }
         }
