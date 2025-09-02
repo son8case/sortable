@@ -15,12 +15,27 @@ namespace son8::sortable {
         ArrayType *curr_;
     public:
         Permutate( ) : curr_( &data_[0] ) {
+            unsigned step = 1u;
             unsigned k = Size;
-            for ( unsigned i = 0; i < Size; ++i ) {
+            for ( unsigned outer = 0; outer < Size; ++outer ) {
                 ValueType value{ };
-                data_[i].fill( ++value );
-                for ( unsigned j = k; j < Size; ++j ) {
-                    data_[i][j] = ++value;
+                data_[outer].fill( ++value );
+                if ( step == outer + 1 ) {
+                    auto offset = step;
+                    while ( offset < Size ) {
+                        ++value;
+                        for ( auto inner = offset; inner < offset + step && inner < Size; ++inner ) {
+                            data_[outer][inner] = value;
+                        }
+                        offset += step;
+                    }
+                    step *= 2;
+                } else {
+                    for ( unsigned inner = k; inner < Size; ++inner ) {
+                        data_[outer][inner] = value;
+                        ++value;
+                    }
+
                 }
                 --k;
             }
@@ -33,6 +48,17 @@ namespace son8::sortable {
         bool next( ) {
             if ( std::next_permutation( curr_->begin( ), curr_->end( ) ) ) return true;
             return ++curr_ > &data_[Size - 1] ? reset( ), false : true;
+        }
+
+        template< typename OutT >
+        void print( OutT &out ) const {
+            for ( auto const &row : data_ ) {
+                out << "[ ";
+                for ( auto const &elem : row ) {
+                    out << elem << " ";
+                }
+                out << "]\n";
+            }
         }
     };
 }

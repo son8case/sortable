@@ -1,6 +1,7 @@
 #ifndef SON8_SORTABLE_UTIL_PRINT_HXX
 #define SON8_SORTABLE_UTIL_PRINT_HXX
 
+#include <son8/sortable/util/permutate.hxx>
 #include <son8/sortable/util/range.hxx>
 #include <son8/sortable/util/stat.hxx>
 
@@ -25,6 +26,17 @@ namespace son8::sortable {
     template< typename Type >
     std::ostream &operator<<( std::ostream &os, Range< Type > range ) {
         print( range, os );
+        return os;
+    }
+
+    template< typename Type, unsigned Size >
+    void print( Permutate< Type, Size > const &permutate, std::ostream &os = std::cout ) {
+        permutate.print( os );
+    }
+
+    template< typename Type, unsigned Size >
+    std::ostream &operator<<( std::ostream &os, Permutate< Type, Size > const &permutate ) {
+        print( permutate, os );
         return os;
     }
 
