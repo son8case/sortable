@@ -49,6 +49,17 @@ namespace son8::sortable {
             if ( std::next_permutation( curr_->begin( ), curr_->end( ) ) ) return true;
             return ++curr_ > &data_[Size - 1] ? reset( ), false : true;
         }
+
+        template< typename OutT >
+        void print( OutT &out ) const {
+            for ( auto const &row : data_ ) {
+                out << "[ ";
+                for ( auto const &elem : row ) {
+                    out << elem << " ";
+                }
+                out << "]\n";
+            }
+        }
     };
 }
 
