@@ -3,15 +3,20 @@
 
 #include <algorithm>
 #include <array>
+#include <initializer_list>
 
 namespace son8::sortable {
 
     template< typename Type, unsigned Size >
     class Permutate final {
+        static inline constexpr std::initializer_list< unsigned > factors_{ 2u, 3u, 4u, 5u, 8u };
+        static constexpr bool check_factor( unsigned n ) {
+            return ( Size % n == 0 && Size / n != 1 );
+        }
         static constexpr unsigned permutate_outer_size( ) {
             unsigned ret = Size;
-            for ( unsigned n : { 2u, 3u, 4u, 5u } ) {
-                if ( Size % n == 0 && Size / n != 1 ) ++ret;
+            for ( auto n : factors_ ) {
+                if ( check_factor( n ) ) ++ret;
             }
             return ret;
         }
@@ -36,8 +41,8 @@ namespace son8::sortable {
                 }
                 --k;
             }
-            for ( auto n : { 2u, 3u, 4u, 5u } ) {
-                if ( Inner_Size % n == 0 && Inner_Size / n != 1 ) {
+            for ( auto n : factors_ ) {
+                if ( check_factor( n ) ) {
                     ValueType value{ };
                     data_[outer].fill( ++value );
                     auto step = Inner_Size / n;
